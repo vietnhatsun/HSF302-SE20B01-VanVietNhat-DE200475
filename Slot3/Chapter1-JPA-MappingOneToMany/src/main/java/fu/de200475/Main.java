@@ -5,9 +5,11 @@ import fu.de200475.pojo.Department;
 import fu.de200475.pojo.Employee;
 import fu.de200475.pojo.Gender;
 import fu.de200475.util.JPAUtil;
+import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -32,6 +34,22 @@ public class Main {
         System.out.println("Phong ban: " + found.getName());
         for (Employee e : found.getEmployees()) {
             System.out.println("  - " + e);
+        }
+
+        System.out.println("\n========== TODO 2.8: TAI HIEN N+1 QUERY PROBLEM ==========");
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            List<Department> departments = em.createQuery("SELECT d FROM Department d", Department.class).getResultList();
+            System.out.println("So luong Department tim thay: " + departments.size());
+
+            for (Department dept : departments) {
+                System.out.println("Phong ban: " + dept.getName());
+                for (Employee emp : dept.getEmployees()) {
+                    System.out.println("  --> Nhan vien: " + emp.getFullName() + " | Luong: " + emp.getSalary());
+                }
+            }
+        } finally {
+            em.close();
         }
 
         JPAUtil.close();
