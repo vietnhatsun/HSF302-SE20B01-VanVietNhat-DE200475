@@ -54,6 +54,16 @@ public class DepartmentDAO {
         }
     }
 
+    public List<Department> findAllWithEmployees() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT DISTINCT d FROM Department d JOIN FETCH d.employees", Department.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public Department update(Department department) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();

@@ -52,6 +52,17 @@ public class Main {
             em.close();
         }
 
+        System.out.println("\n========== TODO 2.9: FIX N+1 BANG JOIN FETCH ==========");
+        List<Department> departmentsWithEmployees = departmentDAO.findAllWithEmployees();
+        System.out.println("So luong Department tim thay (chi voi 1 query): " + departmentsWithEmployees.size());
+
+        for (Department dept : departmentsWithEmployees) {
+            System.out.println("Phong ban: " + dept.getName());
+            for (Employee emp : dept.getEmployees()) {
+                System.out.println("  --> Nhan vien: " + emp.getFullName() + " | Luong: " + emp.getSalary());
+            }
+        }
+
         JPAUtil.close();
     }
 }
