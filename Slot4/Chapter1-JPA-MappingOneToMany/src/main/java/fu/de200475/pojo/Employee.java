@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -139,6 +140,24 @@ public class Employee {
 
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    // TODO 5.4: Override equals() va hashCode() dua tren Business Key la 'email' (unique, not null).
+    // Ly do khong dung 'id':
+    // 1. Khi entity o trang thai Transient (chua luu vao DB), 'id' la null -> sai lech so sanh va hash trong HashSet.
+    // 2. Khi persist, 'id' thay doi tu null sang gia tri moi -> lam thay doi hashCode, pha vo tinh toan ven cua HashSet.
+    // Vi vay, dung 'email' (business key khong doi) de dam bao equals/hashCode nhat quan trong moi trang thai JPA.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(email, employee.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(email);
     }
 
     @Override
