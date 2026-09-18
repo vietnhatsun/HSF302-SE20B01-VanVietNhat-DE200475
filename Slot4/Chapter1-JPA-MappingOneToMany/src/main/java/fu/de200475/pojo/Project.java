@@ -29,6 +29,9 @@ public class Project {
     @Column(nullable = true)
     private LocalDate endDate;
 
+    // TODO 5.3: Inverse side (non-owning side) cua quan he ManyToMany.
+    // 'mappedBy = "projects"' tro toi thuoc tinh 'projects' ben entity Employee (owning side).
+    // KHONG dung cascade = CascadeType.ALL hoac REMOVE de tranh xoa nham Employee khi xoa Project.
     @ManyToMany(mappedBy = "projects")
     private Set<Employee> employees = new HashSet<>();
 
