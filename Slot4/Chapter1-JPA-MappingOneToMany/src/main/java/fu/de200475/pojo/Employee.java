@@ -37,6 +37,9 @@ public class Employee {
     @JoinColumn(name = "department_id", nullable = true)
     private Department department;
 
+    // TODO 5.2: Owning side cua quan he ManyToMany giua Employee va Project.
+    // Su dung @JoinTable voi bang trung gian 'employee_project'.
+    // KHONG dung cascade = CascadeType.ALL hoac REMOVE de tranh xoa nham Project khi xoa Employee (hoac nguoc lai).
     @ManyToMany
     @JoinTable(
             name = "employee_project",
