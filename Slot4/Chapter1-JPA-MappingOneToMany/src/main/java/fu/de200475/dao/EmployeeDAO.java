@@ -1,6 +1,7 @@
 package fu.de200475.dao;
 
 import fu.de200475.pojo.Employee;
+import fu.de200475.pojo.Project;
 import fu.de200475.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -69,6 +70,28 @@ public class EmployeeDAO {
             Employee employee = em.find(Employee.class, id);
             if (employee != null) {
                 em.remove(employee);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    // TODO 5.6: assignEmployeeToProject - find ca 2 entity trong 1 transaction roi goi assignToProject
+    public void assignEmployeeToProject(Long employeeId, Long projectId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Employee employee = em.find(Employee.class, employeeId);
+            Project project = em.find(Project.class, projectId);
+            if (employee != null && project != null) {
+                employee.assignToProject(project);
             }
             tx.commit();
         } catch (Exception e) {

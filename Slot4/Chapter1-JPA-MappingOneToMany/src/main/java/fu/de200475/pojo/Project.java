@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-// TODO 5.1
+// TODO 5.1: Tao entity Project voi quan he N-N dung Set<>
 @Entity
 @Table(name = "projects")
 public class Project {
@@ -31,7 +31,7 @@ public class Project {
     @Column(nullable = true)
     private LocalDate endDate;
 
-    // TODO 5.3
+    // TODO 5.3: Inverse side @ManyToMany(mappedBy = "projects")
     @ManyToMany(mappedBy = "projects")
     private Set<Employee> employees = new HashSet<>();
 
@@ -109,7 +109,7 @@ public class Project {
         this.employees = employees;
     }
 
-    // TODO 5.4
+    // TODO 5.4: Override equals() va hashCode() dua tren Business Key la projectCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
