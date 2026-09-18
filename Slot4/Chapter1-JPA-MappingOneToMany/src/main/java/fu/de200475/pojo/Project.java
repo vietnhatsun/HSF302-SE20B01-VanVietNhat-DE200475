@@ -105,8 +105,18 @@ public class Project {
         return employees;
     }
 
-    public void setEmployees(Set<Employee> employees) {
-        this.employees = employees;
+    public void addEmployee(Employee employee) {
+        if (employee != null) {
+            this.employees.add(employee);
+            employee.getProjects().add(this);
+        }
+    }
+
+    public void removeEmployee(Employee employee) {
+        if (employee != null) {
+            this.employees.remove(employee);
+            employee.getProjects().remove(this);
+        }
     }
 
     // TODO 5.4: Override equals() va hashCode() dua tren Business Key la projectCode

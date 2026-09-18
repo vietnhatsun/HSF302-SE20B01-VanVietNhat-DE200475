@@ -149,6 +149,13 @@ public class Employee {
         }
     }
 
+    public void removeProject(Project p) {
+        if (p != null) {
+            this.projects.remove(p);
+            p.getEmployees().remove(this);
+        }
+    }
+
     // TODO 5.4: Override equals() va hashCode() dua tren Business Key la email
     @Override
     public boolean equals(Object o) {

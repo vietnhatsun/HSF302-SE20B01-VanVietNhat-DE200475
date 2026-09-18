@@ -123,4 +123,16 @@ public class EmployeeDAO {
             em.close();
         }
     }
+
+    public Employee findByEmail(String email) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            List<Employee> list = em.createQuery("SELECT e FROM Employee e WHERE e.email = :email", Employee.class)
+                    .setParameter("email", email)
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
+        } finally {
+            em.close();
+        }
+    }
 }

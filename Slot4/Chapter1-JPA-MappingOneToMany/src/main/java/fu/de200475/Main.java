@@ -1,11 +1,15 @@
 package fu.de200475;
 
+import fu.de200475.dao.DepartmentDAO;
 import fu.de200475.dao.EmployeeDAO;
 import fu.de200475.dao.ProjectDAO;
+import fu.de200475.pojo.Department;
 import fu.de200475.pojo.Employee;
 import fu.de200475.pojo.Gender;
 import fu.de200475.pojo.Project;
 import fu.de200475.util.JPAUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,8 +17,19 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        // Don dep data demo cu neu co de chay lai chuong trinh khong bi trung Unique Key
+        cleanDemoData();
+
+        DepartmentDAO departmentDAO = new DepartmentDAO();
         EmployeeDAO employeeDAO = new EmployeeDAO();
         ProjectDAO projectDAO = new ProjectDAO();
+
+        // Lay phong ban co san hoac tao moi phong ban mac dinh
+        Department dept = departmentDAO.findAll().stream().findFirst().orElse(null);
+        if (dept == null) {
+            dept = new Department("Software Engineering", "Building Alpha");
+            departmentDAO.save(dept);
+        }
 
         // TODO 5.7: Main demo - tao 3 Employee, 2 Project, phan cong cheo va in ra
         System.out.println("========== TODO 5.7: DEMO TAO PROJECT VA EMPLOYEE ==========");
@@ -27,13 +42,18 @@ public class Main {
         projectDAO.save(prjB);
         System.out.println("Da tao 2 Project thanh cong: ID_A = " + prjA.getId() + ", ID_B = " + prjB.getId());
 
-        // 2. Tao 3 Employee (day du thong tin salary, hireDate, gender, active)
+        // 2. Tao 3 Employee (day du thong tin salary, hireDate, gender, active, department)
         Employee e1 = new Employee("an.nguyen@fpt.edu.vn", "Nguyen Van An", Gender.MALE,
                 new BigDecimal("15000000"), LocalDate.of(2022, 1, 10), true);
+        e1.setDepartment(dept);
+
         Employee e2 = new Employee("binh.tran@fpt.edu.vn", "Tran Thi Binh", Gender.FEMALE,
                 new BigDecimal("20000000"), LocalDate.of(2021, 5, 15), true);
+        e2.setDepartment(dept);
+
         Employee e3 = new Employee("cuong.le@fpt.edu.vn", "Le Van Cuong", Gender.OTHER,
                 new BigDecimal("18000000"), LocalDate.of(2023, 2, 20), true);
+        e3.setDepartment(dept);
 
         employeeDAO.save(e1);
         employeeDAO.save(e2);
@@ -60,5 +80,26 @@ public class Main {
         }
 
         JPAUtil.close();
+    }
+
+    private static void cleanDemoData() {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            // Xoa lien ket trong bang phu employee_project truoc
+            em.createNativeQuery("DELETE FROM employee_project").executeUpdate();
+            // Xoa nhan vien demo
+            em.createQuery("DELETE FROM Employee e WHERE e.email IN ('an.nguyen@fpt.edu.vn', 'binh.tran@fpt.edu.vn', 'cuong.le@fpt.edu.vn')").executeUpdate();
+            // Xoa project demo
+            em.createQuery("DELETE FROM Project p WHERE p.projectCode IN ('PRJ001', 'PRJ002')").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        } finally {
+            em.close();
+        }
     }
 }

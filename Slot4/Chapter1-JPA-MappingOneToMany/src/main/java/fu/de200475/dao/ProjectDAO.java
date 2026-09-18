@@ -80,4 +80,37 @@ public class ProjectDAO {
             em.close();
         }
     }
+
+    public Project findByCode(String projectCode) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            List<Project> list = em.createQuery("SELECT p FROM Project p WHERE p.projectCode = :code", Project.class)
+                    .setParameter("code", projectCode)
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Project> findAllWithEmployees() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.employees", Project.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Project findByIdWithEmployees(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Project p LEFT JOIN FETCH p.employees WHERE p.id = :id", Project.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
 }
