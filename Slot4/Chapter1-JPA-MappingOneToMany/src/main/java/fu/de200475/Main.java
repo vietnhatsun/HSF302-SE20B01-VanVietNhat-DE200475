@@ -1,11 +1,11 @@
 package fu.de200475;
 
-import fu.de200475.dao.DepartmentDAO;
-import fu.de200475.pojo.Department;
+import fu.de200475.dao.EmployeeDAO;
+import fu.de200475.dao.ProjectDAO;
 import fu.de200475.pojo.Employee;
 import fu.de200475.pojo.Gender;
+import fu.de200475.pojo.Project;
 import fu.de200475.util.JPAUtil;
-import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,53 +13,49 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        DepartmentDAO departmentDAO = new DepartmentDAO();
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        ProjectDAO projectDAO = new ProjectDAO();
 
-        Department it = new Department("Marketing", "Ha Noi");
-        Employee e1 = new Employee("aa.nguyen@company.com", "Nguyen Van A", Gender.MALE,
-                new BigDecimal("15000000"), LocalDate.of(2022, 1, 10));
-        Employee e2 = new Employee("bb.tran@company.com", "Tran Thi B", Gender.FEMALE,
-                new BigDecimal("18000000"), LocalDate.of(2021, 6, 1));
-        Employee e3 = new Employee("cc.le@company.com", "Le Van C", Gender.OTHER,
-                new BigDecimal("12000000"), LocalDate.of(2023, 3, 15));
+        // TODO 5.7: Main demo - tao 3 Employee, 2 Project, phan cong cheo va in ra
+        System.out.println("========== TODO 5.7: DEMO TAO PROJECT VA EMPLOYEE ==========");
 
-        it.addEmployee(e1);
-        it.addEmployee(e2);
-        it.addEmployee(e3);
+        // 1. Tao 2 Project
+        Project prjA = new Project("PRJ001", "E-Commerce System", new BigDecimal("100000000"), LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
+        Project prjB = new Project("PRJ002", "Mobile Banking App", new BigDecimal("250000000"), LocalDate.of(2024, 3, 1), null);
 
-        departmentDAO.save(it);
-        System.out.println("Da luu Department, id = " + it.getId());
+        projectDAO.save(prjA);
+        projectDAO.save(prjB);
+        System.out.println("Da tao 2 Project thanh cong: ID_A = " + prjA.getId() + ", ID_B = " + prjB.getId());
 
-        Department found = departmentDAO.findByIdWithEmployees(it.getId());
-        System.out.println("Phong ban: " + found.getName());
-        for (Employee e : found.getEmployees()) {
-            System.out.println("  - " + e);
-        }
+        // 2. Tao 3 Employee (day du thong tin salary, hireDate, gender, active)
+        Employee e1 = new Employee("an.nguyen@fpt.edu.vn", "Nguyen Van An", Gender.MALE,
+                new BigDecimal("15000000"), LocalDate.of(2022, 1, 10), true);
+        Employee e2 = new Employee("binh.tran@fpt.edu.vn", "Tran Thi Binh", Gender.FEMALE,
+                new BigDecimal("20000000"), LocalDate.of(2021, 5, 15), true);
+        Employee e3 = new Employee("cuong.le@fpt.edu.vn", "Le Van Cuong", Gender.OTHER,
+                new BigDecimal("18000000"), LocalDate.of(2023, 2, 20), true);
 
-        System.out.println("\n========== TODO 2.8: TAI HIEN N+1 QUERY PROBLEM ==========");
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            List<Department> departments = em.createQuery("SELECT d FROM Department d", Department.class).getResultList();
-            System.out.println("So luong Department tim thay: " + departments.size());
+        employeeDAO.save(e1);
+        employeeDAO.save(e2);
+        employeeDAO.save(e3);
+        System.out.println("Da tao 3 Employee thanh cong: ID_1 = " + e1.getId() + ", ID_2 = " + e2.getId() + ", ID_3 = " + e3.getId());
 
-            for (Department dept : departments) {
-                System.out.println("Phong ban: " + dept.getName());
-                for (Employee emp : dept.getEmployees()) {
-                    System.out.println("  --> Nhan vien: " + emp.getFullName() + " | Luong: " + emp.getSalary());
-                }
-            }
-        } finally {
-            em.close();
-        }
+        // 3. Phan cong cheo qua EmployeeDAO: NV1 -> A+B, NV2 -> B, NV3 -> A
+        System.out.println("\n========== PHAN CONG CHEO NHAN VIEN VAO PROJECT ==========");
+        employeeDAO.assignEmployeeToProject(e1.getId(), prjA.getId());
+        employeeDAO.assignEmployeeToProject(e1.getId(), prjB.getId());
+        employeeDAO.assignEmployeeToProject(e2.getId(), prjB.getId());
+        employeeDAO.assignEmployeeToProject(e3.getId(), prjA.getId());
+        System.out.println("Phan cong thanh cong!");
 
-        System.out.println("\n========== TODO 2.9: FIX N+1 BANG JOIN FETCH ==========");
-        List<Department> departmentsWithEmployees = departmentDAO.findAllWithEmployees();
-        System.out.println("So luong Department tim thay (chi voi 1 query): " + departmentsWithEmployees.size());
-
-        for (Department dept : departmentsWithEmployees) {
-            System.out.println("Phong ban: " + dept.getName());
-            for (Employee emp : dept.getEmployees()) {
-                System.out.println("  --> Nhan vien: " + emp.getFullName() + " | Luong: " + emp.getSalary());
+        // 4. Luu va in ra danh sach project cua tung nhan vien
+        System.out.println("\n========== DANH SACH PROJECT CUA TUNG NHAN VIEN ==========");
+        List<Employee> employees = employeeDAO.findAllWithProjects();
+        for (Employee emp : employees) {
+            System.out.println("\nNhan vien: " + emp.getFullName() + " (" + emp.getEmail() + ")");
+            System.out.println("  - So luong project tham gia: " + emp.getProjects().size());
+            for (Project p : emp.getProjects()) {
+                System.out.println("    + [" + p.getProjectCode() + "] " + p.getProjectName() + " | Ngan sach: " + p.getBudget());
             }
         }
 

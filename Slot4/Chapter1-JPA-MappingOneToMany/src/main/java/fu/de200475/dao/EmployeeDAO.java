@@ -103,4 +103,24 @@ public class EmployeeDAO {
             em.close();
         }
     }
+
+    public List<Employee> findAllWithProjects() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT DISTINCT e FROM Employee e LEFT JOIN FETCH e.projects", Employee.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Employee findByIdWithProjects(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT e FROM Employee e LEFT JOIN FETCH e.projects WHERE e.id = :id", Employee.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
 }
