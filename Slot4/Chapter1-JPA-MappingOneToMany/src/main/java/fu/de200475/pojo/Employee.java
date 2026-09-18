@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+// TODO 5.1: Tao entity Employee voi quan he N-N dung Set<>
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -38,9 +39,7 @@ public class Employee {
     @JoinColumn(name = "department_id", nullable = true)
     private Department department;
 
-    // TODO 5.2: Owning side cua quan he ManyToMany giua Employee va Project.
-    // Su dung @JoinTable voi bang trung gian 'employee_project'.
-    // KHONG dung cascade = CascadeType.ALL hoac REMOVE de tranh xoa nham Project khi xoa Employee (hoac nguoc lai).
+    // TODO 5.2: Owning side @ManyToMany voi @JoinTable employee_project
     @ManyToMany
     @JoinTable(
             name = "employee_project",
@@ -142,11 +141,15 @@ public class Employee {
         this.projects = projects;
     }
 
-    // TODO 5.4: Override equals() va hashCode() dua tren Business Key la 'email' (unique, not null).
-    // Ly do khong dung 'id':
-    // 1. Khi entity o trang thai Transient (chua luu vao DB), 'id' la null -> sai lech so sanh va hash trong HashSet.
-    // 2. Khi persist, 'id' thay doi tu null sang gia tri moi -> lam thay doi hashCode, pha vo tinh toan ven cua HashSet.
-    // Vi vay, dung 'email' (business key khong doi) de dam bao equals/hashCode nhat quan trong moi trang thai JPA.
+    // TODO 5.5: Helper method assignToProject dong bo 2 chieu
+    public void assignToProject(Project p) {
+        if (p != null) {
+            this.projects.add(p);
+            p.getEmployees().add(this);
+        }
+    }
+
+    // TODO 5.4: Override equals() va hashCode() dua tren Business Key la email
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

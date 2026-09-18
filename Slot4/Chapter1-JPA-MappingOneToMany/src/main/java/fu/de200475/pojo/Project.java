@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+// TODO 5.1
 @Entity
 @Table(name = "projects")
 public class Project {
@@ -30,9 +31,7 @@ public class Project {
     @Column(nullable = true)
     private LocalDate endDate;
 
-    // TODO 5.3: Inverse side (non-owning side) cua quan he ManyToMany.
-    // 'mappedBy = "projects"' tro toi thuoc tinh 'projects' ben entity Employee (owning side).
-    // KHONG dung cascade = CascadeType.ALL hoac REMOVE de tranh xoa nham Employee khi xoa Project.
+    // TODO 5.3
     @ManyToMany(mappedBy = "projects")
     private Set<Employee> employees = new HashSet<>();
 
@@ -110,11 +109,7 @@ public class Project {
         this.employees = employees;
     }
 
-    // TODO 5.4: Override equals() va hashCode() dua tren Business Key la 'projectCode' (unique, not null).
-    // Ly do khong dung 'id':
-    // 1. Khi entity o trang thai Transient (chua luu vao DB), 'id' la null -> gay loi khi dua vao HashSet / Set.
-    // 2. Sau khi persist, 'id' duoc tu dong tao boi DB, lam thay doi gia tri hashCode() va gay loi trong Set.
-    // Do do dung 'projectCode' la khoa nghiep vu duy nhat va bat bien de so sanh va hash nhat quan.
+    // TODO 5.4
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
