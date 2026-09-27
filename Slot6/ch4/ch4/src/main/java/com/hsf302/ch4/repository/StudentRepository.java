@@ -53,4 +53,12 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
            "WHERE s.gpa > (SELECT AVG(s2.gpa) FROM Student s2) " +
            "ORDER BY s.gpa DESC")
     List<Student> findAboveAverageGpa();
+
+    // ===== TODO 17 =====
+    @Query(value = "SELECT TOP (:n) s.* " +
+                   "FROM students s JOIN departments d ON s.department_id = d.id " +
+                   "WHERE d.code = :code " +
+                   "ORDER BY s.gpa DESC",
+           nativeQuery = true)
+    List<Student> findTopNByDepartmentNative(@Param("code") String code, @Param("n") int n);
 }

@@ -130,4 +130,12 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> findAboveAverageGpa() {
         return studentRepository.findAboveAverageGpa();
     }
+
+    @Override
+    public List<Student> findTopNInDepartment(String deptCode, int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("n phải > 0");
+        }
+        return studentRepository.findTopNByDepartmentNative(deptCode, n);
+    }
 }
