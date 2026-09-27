@@ -55,7 +55,7 @@ public class ExerciseRunner implements CommandLineRunner {
         todo16();
         todo17();
         todo18();
-        // todo19();
+        todo19();
     }
 
     private void bonus() {
@@ -148,7 +148,7 @@ public class ExerciseRunner implements CommandLineRunner {
     }
 
     private void todo15() {
-        title("TODO 15: Subquery - GPA above average");
+        title("TODO 15: Subquery - GPA average");
         printList("GPA > AVG", studentService.findAboveAverageGpa());
     }
 
@@ -179,6 +179,16 @@ public class ExerciseRunner implements CommandLineRunner {
         list.forEach(p -> System.out.printf("   %s | %-15s | %.1f | %s%n",
                 p.getStudentCode(), p.getFullName(), p.getGpa(), p.getDepartmentName()));
         System.out.println("   -> " + list.size() + " record(s)");
+    }
+
+    private void todo19() {
+        title("TODO 19: @Query + Pageable");
+        for (int i = 0; i < 2; i++) {
+            Page<Student> page = studentService.findActiveByDepartment("SE", i, 2);
+            printList("SE active - page " + page.getNumber(), page.getContent());
+            System.out.println("   totalElements=" + page.getTotalElements()
+                    + ", totalPages=" + page.getTotalPages());
+        }
     }
 
     // ===== helpers =====
