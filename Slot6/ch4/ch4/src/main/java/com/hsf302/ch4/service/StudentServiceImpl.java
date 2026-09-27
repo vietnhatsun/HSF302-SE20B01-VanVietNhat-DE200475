@@ -1,5 +1,6 @@
 package com.hsf302.ch4.service;
 
+import com.hsf302.ch4.pojo.Gender;
 import com.hsf302.ch4.pojo.Student;
 import com.hsf302.ch4.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,5 +78,23 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> findWithoutEmail() {
         return studentRepository.findByEmailIsNull();
+    }
+
+    @Override
+    public List<Student> findByGpaRange(double min, double max) {
+        if (min > max) {
+            throw new IllegalArgumentException("min GPA phải <= max GPA");
+        }
+        return studentRepository.findByGpaBetweenOrderByGpaDesc(min, max);
+    }
+
+    @Override
+    public List<Student> findActiveByGender(Gender gender) {
+        return studentRepository.findByGenderAndActiveTrue(gender);
+    }
+
+    @Override
+    public List<Student> findBornAfter(LocalDate date) {
+        return studentRepository.findByDobAfter(date);
     }
 }
