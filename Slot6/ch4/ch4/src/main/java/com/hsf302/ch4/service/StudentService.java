@@ -22,6 +22,9 @@ public interface StudentService {
     List<Student> findByGpaRange(double min, double max);               // TODO 10a
     List<Student> findActiveByGender(Gender gender);                    // TODO 10b
     List<Student> findBornAfter(LocalDate date);                        // TODO 10c
+    List<Student> findByDepartment(String deptCode);                    // TODO 11a
+    long countByDepartment(String deptCode);                            // TODO 11b (dùng lại ở TODO 22)
+    List<Student> findTop3ByGpa();                                      // TODO 11c
 }
 
 
