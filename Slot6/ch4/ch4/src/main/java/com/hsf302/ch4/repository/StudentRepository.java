@@ -4,6 +4,8 @@ import com.hsf302.ch4.pojo.Gender;
 import com.hsf302.ch4.pojo.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,4 +33,11 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
     List<Student> findByDepartment_CodeOrderByFullNameAsc(String code);   // JOIN departments ... WHERE d.code = ?
     long countByDepartment_Code(String code);
     List<Student> findTop3ByOrderByGpaDesc();                              // SELECT TOP 3 ... ORDER BY gpa DESC
+
+    // ===== TODO 12 =====
+    @Query("SELECT s FROM Student s " +
+           "WHERE s.department.code = :code AND s.gpa >= :minGpa " +
+           "ORDER BY s.gpa DESC")
+    List<Student> findGoodStudentsInDepartment(@Param("code") String code,
+                                               @Param("minGpa") double minGpa);
 }
