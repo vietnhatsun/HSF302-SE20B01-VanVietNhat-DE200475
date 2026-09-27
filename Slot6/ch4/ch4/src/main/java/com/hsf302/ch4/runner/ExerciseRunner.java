@@ -47,7 +47,8 @@ public class ExerciseRunner implements CommandLineRunner {
     private void partD() {
         todo12();
         todo13();
-        // todo14(); todo15(); todo16(); todo17(); todo18(); todo19();
+        todo14();
+        // todo15(); todo16(); todo17(); todo18(); todo19();
     }
 
     private void bonus() {
@@ -132,6 +133,11 @@ public class ExerciseRunner implements CommandLineRunner {
         title("TODO 13: JPQL LIKE");
         printList("keyword 'hoa'", studentService.searchByKeyword("hoa"));
         printList("keyword 'gmail'", studentService.searchByKeyword("gmail"));
+    }
+
+    private void todo14() {
+        title("TODO 14: Statistics by department (DTO)");
+        printList("code | name | total | avgGpa", departmentService.getStatistics());
     }
 
     // ===== helpers =====
