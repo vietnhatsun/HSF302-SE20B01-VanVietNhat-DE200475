@@ -65,7 +65,8 @@ public class ExerciseRunner implements CommandLineRunner {
     private void partE() {
         todo20();
         todo21();
-        // todo22(); todo23();
+        todo22();
+        // todo23();
     }
 
     // ===== TODO implementations =====
@@ -211,6 +212,14 @@ public class ExerciseRunner implements CommandLineRunner {
         int rows = studentService.deactivateLowGpa(2.5);
         System.out.println("Rows affected: " + rows);
         System.out.println("Active students now: " + studentService.countActive());
+    }
+
+    private void todo22() {
+        title("TODO 22: Transfer IA -> SE, then delete IA");
+        int moved = departmentService.transferStudentsAndDelete("IA", "SE");
+        System.out.println("Students moved: " + moved);
+        System.out.println("Students of SE: " + studentService.countByDepartment("SE"));
+        printList("Departments left", departmentService.findAll());
     }
 
     // ===== helpers =====
