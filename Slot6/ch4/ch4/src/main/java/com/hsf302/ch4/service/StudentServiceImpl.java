@@ -161,4 +161,16 @@ public class StudentServiceImpl implements StudentService {
                 .and(StudentSpecs.isActive(active));
         return studentRepository.findAll(spec, Sort.by("fullName"));
     }
+
+    @Override
+    @Transactional                                            // ghi đè readOnly của class
+    public Student updateGpa(String studentCode, double newGpa) {
+        if (newGpa < 0 || newGpa > 4) {
+            throw new IllegalArgumentException("GPA phải trong khoảng [0, 4]");
+        }
+        Student s = studentRepository.findByStudentCode(studentCode)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentCode));
+        s.setGpa(newGpa);
+        return s;              // commit → Hibernate tự sinh UPDATE (dirty checking)
+    }
 }
