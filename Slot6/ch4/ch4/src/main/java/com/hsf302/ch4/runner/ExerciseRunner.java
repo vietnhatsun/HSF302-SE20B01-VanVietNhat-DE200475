@@ -59,7 +59,7 @@ public class ExerciseRunner implements CommandLineRunner {
     }
 
     private void bonus() {
-        // todo24();
+        todo24();
     }
 
     private void partE() {
@@ -189,6 +189,12 @@ public class ExerciseRunner implements CommandLineRunner {
             System.out.println("   totalElements=" + page.getTotalElements()
                     + ", totalPages=" + page.getTotalPages());
         }
+    }
+
+    private void todo24() {
+        title("TODO 24 (Bonus): Specification");
+        printList("search(null, AI, 3.0, true)", studentService.search(null, "AI", 3.0, true));
+        printList("search(van, null, null, null)", studentService.search("van", null, null, null));
     }
 
     // ===== helpers =====
