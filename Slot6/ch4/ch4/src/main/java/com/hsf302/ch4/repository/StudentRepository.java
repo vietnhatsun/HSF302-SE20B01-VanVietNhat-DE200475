@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -76,4 +77,9 @@ public interface StudentRepository extends JpaRepository<Student, Long>,
     // ===== TODO 19 =====
     @Query("SELECT s FROM Student s WHERE s.department.code = :code AND s.active = true")
     Page<Student> findActiveByDepartment(@Param("code") String code, Pageable pageable);
+
+    // ===== TODO 21 =====
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Student s SET s.active = false WHERE s.gpa < :threshold AND s.active = true")
+    int deactivateLowGpa(@Param("threshold") double threshold);
 }

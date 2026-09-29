@@ -173,4 +173,10 @@ public class StudentServiceImpl implements StudentService {
         s.setGpa(newGpa);
         return s;              // commit → Hibernate tự sinh UPDATE (dirty checking)
     }
+
+    @Override
+    @Transactional
+    public int deactivateLowGpa(double threshold) {
+        return studentRepository.deactivateLowGpa(threshold);
+    }
 }

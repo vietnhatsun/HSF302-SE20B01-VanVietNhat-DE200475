@@ -64,7 +64,8 @@ public class ExerciseRunner implements CommandLineRunner {
 
     private void partE() {
         todo20();
-        // todo21(); todo22(); todo23();
+        todo21();
+        // todo22(); todo23();
     }
 
     // ===== TODO implementations =====
@@ -203,6 +204,13 @@ public class ExerciseRunner implements CommandLineRunner {
         System.out.println("Before: " + studentService.findByStudentCode("SE001").orElseThrow());
         studentService.updateGpa("SE001", 3.4);
         System.out.println("After : " + studentService.findByStudentCode("SE001").orElseThrow());
+    }
+
+    private void todo21() {
+        title("TODO 21: @Modifying UPDATE");
+        int rows = studentService.deactivateLowGpa(2.5);
+        System.out.println("Rows affected: " + rows);
+        System.out.println("Active students now: " + studentService.countActive());
     }
 
     // ===== helpers =====
