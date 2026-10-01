@@ -1,16 +1,19 @@
 package com.hsf302.ch4.runner;
 
 import com.hsf302.ch4.pojo.Course;
+import com.hsf302.ch4.pojo.Student;
 import com.hsf302.ch4.service.CourseService;
 import com.hsf302.ch4.service.EnrollmentService;
 import com.hsf302.ch4.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.LazyInitializationException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -48,8 +51,10 @@ public class Exercise2Runner implements CommandLineRunner {
         todo13();
         todo14();
         todo15();
-        /* todo16(); todo17(); todo18(); todo19(); */
+        todo16();
+        /* todo17(); todo18(); todo19(); */
     }
+
     private void bonus() { /* todo25(); */ }
     private void partE() { /* todo20(); todo21(); todo22(); todo23(); todo24(); */ }
 
@@ -140,6 +145,35 @@ public class Exercise2Runner implements CommandLineRunner {
         printList("(a) Full courses", courseService.findFullCourses());
         printList("(b) Students with more than 2 courses", enrollmentService.findStudentsWithMoreThan(2));
     }
+
+    // ===== TODO 16 =====
+    private void todo16() {
+        title("TODO 16: LazyInitializationException, JOIN FETCH, @EntityGraph");
+
+        // (a) Student trả về từ Service (Exercise 1) → transaction đã đóng → courses chưa được nạp
+        try {
+            Student s = studentService.findByStudentCode("SE001").orElseThrow();
+            System.out.println("(a) courses = " + s.getCourses().size());
+        } catch (LazyInitializationException e) {
+            System.out.println("(a) Caught: " + e.getClass().getSimpleName());
+            System.out.println("    " + e.getMessage());
+        }
+
+        // (b) JOIN FETCH: nạp student + courses trong 1 câu SQL
+        Student s = enrollmentService.getStudentWithCourses("SE001");
+        System.out.println("(b) " + s.getStudentCode() + " - " + s.getFullName());
+        s.getCourses().stream()
+                .sorted(Comparator.comparing(Course::getCode))
+                .forEach(c -> System.out.println("   " + c));
+
+        // (c) @EntityGraph: nạp course + students
+        Course c = courseService.getWithStudents("SWP391");
+        System.out.println("(c) " + c.getCode() + " - " + c.getName());
+        c.getStudents().stream()
+                .sorted(Comparator.comparing(Student::getFullName))
+                .forEach(st -> System.out.println("   " + st));
+    }
+
 
 
 
