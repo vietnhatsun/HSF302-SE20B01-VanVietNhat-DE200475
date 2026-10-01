@@ -79,6 +79,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return studentRepository.getCreditSummary(minCredits);
     }
 
+    @Override
+    public List<Student> findStudentsWithMoreThan(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be >= 0");
+        }
+        return studentRepository.findStudentsWithMoreThanNCourses(n);
+    }
+
+
 
 
     // ===== helper dùng chung cho mọi method =====
