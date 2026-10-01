@@ -52,8 +52,10 @@ public class Exercise2Runner implements CommandLineRunner {
         todo14();
         todo15();
         todo16();
-        /* todo17(); todo18(); todo19(); */
+        todo17();
+        /* todo18(); todo19(); */
     }
+
 
     private void bonus() { /* todo25(); */ }
     private void partE() { /* todo20(); todo21(); todo22(); todo23(); todo24(); */ }
@@ -173,6 +175,14 @@ public class Exercise2Runner implements CommandLineRunner {
                 .sorted(Comparator.comparing(Student::getFullName))
                 .forEach(st -> System.out.println("   " + st));
     }
+
+    // ===== TODO 17 =====
+    private void todo17() {
+        title("TODO 17: native SQL on join table - top 3 enrolled courses");
+        courseService.findTopEnrolled(3).forEach(r -> System.out.printf(
+                "   %s | %-35s | %d student(s)%n", r.getCode(), r.getName(), r.getEnrolled()));
+    }
+
 
 
 

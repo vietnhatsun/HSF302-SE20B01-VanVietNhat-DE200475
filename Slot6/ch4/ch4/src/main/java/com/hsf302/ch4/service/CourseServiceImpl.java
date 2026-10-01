@@ -86,7 +86,17 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findWithStudentsByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found: " + code));
     }
+
+    // ===== TODO 17 =====
+    @Override
+    public List<com.hsf302.ch4.dto.CourseEnrollmentCount> findTopEnrolled(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("n must be > 0");
+        }
+        return courseRepository.findTopEnrolledNative(n);
+    }
 }
+
 
 
 
