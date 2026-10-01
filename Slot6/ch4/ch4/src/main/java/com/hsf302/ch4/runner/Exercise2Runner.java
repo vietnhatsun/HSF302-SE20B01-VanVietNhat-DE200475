@@ -39,7 +39,8 @@ public class Exercise2Runner implements CommandLineRunner {
     }
     private void partC() {
         todo8();
-        // todo9(); todo10(); todo11();
+        todo9();
+        // todo10(); todo11();
     }
     private void partD() { /* todo12(); todo13(); todo14(); todo15(); todo16(); todo17(); todo18(); todo19(); */ }
     private void bonus() { /* todo25(); */ }
@@ -72,6 +73,14 @@ public class Exercise2Runner implements CommandLineRunner {
         }
         printList("(b) Semester SU26", courseService.findBySemester("SU26"));
         System.out.println("(c) Courses in FA26: " + courseService.countBySemester("FA26"));
+    }
+
+    // ===== TODO 9 =====
+    private void todo9() {
+        title("TODO 9: derived query through collection courses");
+        printList("(a) Students of PRJ301", enrollmentService.findStudentsInCourse("PRJ301"));
+        System.out.println("(b) Students of HSF302: " + enrollmentService.countStudentsInCourse("HSF302"));
+        printList("(c) Active students of PRJ301", enrollmentService.findActiveStudentsInCourse("PRJ301"));
     }
 
     // ===== helpers =====
