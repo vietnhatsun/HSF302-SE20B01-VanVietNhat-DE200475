@@ -17,4 +17,8 @@ public interface EnrollmentService {
     // TODO 11
     List<Student> findStudentsWithoutCourses();
     boolean isEnrolled(String studentCode, String courseCode);
+
+    // ===== Part D =====
+    List<Student> findGoodStudentsInCourse(String courseCode, double minGpa);              // TODO 12
 }
+
