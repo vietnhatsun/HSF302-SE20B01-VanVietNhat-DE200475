@@ -11,6 +11,7 @@ public interface DepartmentService {
     boolean existsById(Long id);                        // TODO 6
     List<Department> findDepartmentsWithoutStudents();  // TODO 11d
     List<DepartmentStatDTO> getStatistics();            // TODO 14 (dùng lại ở TODO 23)
+    List<DepartmentStatDTO> getStatsWithMinStudents(long minCount); // Yêu cầu giáo viên
     Optional<Department> findByCode(String code);       // TODO 16a
     Department getWithStudents(String code);            // TODO 16b
     int transferStudentsAndDelete(String fromCode, String toCode);   // TODO 22

@@ -1,5 +1,6 @@
 package com.hsf302.ch4.runner;
 
+import com.hsf302.ch4.dto.DepartmentStatDTO;
 import com.hsf302.ch4.dto.StudentSummary;
 import com.hsf302.ch4.pojo.Department;
 import com.hsf302.ch4.pojo.Gender;
@@ -9,6 +10,7 @@ import com.hsf302.ch4.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.LazyInitializationException;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -16,9 +18,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Order(2)
+@Profile("ex1")
 @RequiredArgsConstructor
 public class ExerciseRunner implements CommandLineRunner {
 
@@ -51,6 +55,7 @@ public class ExerciseRunner implements CommandLineRunner {
         todo12();
         todo13();
         todo14();
+        teacherRequirement();
         todo15();
         todo16();
         todo17();
@@ -148,6 +153,28 @@ public class ExerciseRunner implements CommandLineRunner {
     private void todo14() {
         title("TODO 14: Statistics by department (DTO)");
         printList("code | name | total | avgGpa", departmentService.getStatistics());
+    }
+
+    private void teacherRequirement() {
+        title("YÊU CẦU GIÁO VIÊN: Thống kê số lượng SV theo Phòng Ban");
+        
+        // 1. Trường hợp lấy phòng ban có số lượng >= 3 (Kết quả: se_4, ai_3, ia_3)
+        List<DepartmentStatDTO> statsGte3 = departmentService.getStatsWithMinStudents(3L);
+        String formattedGte3 = statsGte3.stream()
+                .map(stat -> stat.code().toLowerCase() + "_" + stat.totalStudents())
+                .collect(Collectors.joining(", "));
+        System.out.println("-> Kết quả định dạng (số lượng >= 3): " + formattedGte3);
+
+        // 2. Trường hợp lấy phòng ban có số lượng > 3 (Kết quả: se_4)
+        List<DepartmentStatDTO> statsGt3 = departmentService.getStatsWithMinStudents(4L);
+        String formattedGt3 = statsGt3.stream()
+                .map(stat -> stat.code().toLowerCase() + "_" + stat.totalStudents())
+                .collect(Collectors.joining(", "));
+        System.out.println("-> Kết quả định dạng (số lượng > 3) : " + formattedGt3);
+
+        System.out.println("\nChi tiết danh sách phòng ban:");
+        statsGte3.forEach(stat -> System.out.printf("   - %-25s (%s): %d sinh viên%n",
+                stat.name(), stat.code().toLowerCase(), stat.totalStudents()));
     }
 
     private void todo15() {
