@@ -1,5 +1,6 @@
 package com.hsf302.ch4.service;
 
+import com.hsf302.ch4.dto.CourseStatDTO;
 import com.hsf302.ch4.pojo.Course;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface CourseService {
 
     // TODO 11
     List<Course> findCoursesWithoutStudents();
+
+    // TODO 13
+    List<CourseStatDTO> getStatistics();
 }
+
