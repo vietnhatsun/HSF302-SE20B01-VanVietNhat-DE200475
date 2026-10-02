@@ -41,6 +41,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<DepartmentStatDTO> getStatsWithMinStudents(long minCount) {
+        return departmentRepository.findDepartmentStatsWithMinStudents(minCount);
+    }
+
+    @Override
     public Optional<Department> findByCode(String code) {
         return departmentRepository.findByCode(code);
     }
