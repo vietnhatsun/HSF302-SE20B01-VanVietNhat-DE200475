@@ -2,6 +2,7 @@ package com.hsf302.ch4.runner;
 
 import com.hsf302.ch4.pojo.Course;
 import com.hsf302.ch4.pojo.Student;
+import com.hsf302.ch4.repository.CourseRepository;
 import com.hsf302.ch4.service.CourseService;
 import com.hsf302.ch4.service.EnrollmentService;
 import com.hsf302.ch4.service.StudentService;
@@ -26,12 +27,14 @@ public class Exercise2Runner implements CommandLineRunner {
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
     private final StudentService studentService;          // của Exercise 1 (TODO 16a, 21)
+    private final CourseRepository courseRepository;
 
     @Override
     public void run(String... args) {
         partB();
         partC();
         partD();
+        test3CauHoi();
         bonus();        // chạy trên dữ liệu gốc → trước Part E
         partE();
     }
@@ -53,7 +56,8 @@ public class Exercise2Runner implements CommandLineRunner {
         todo15();
         todo16();
         todo17();
-        /* todo18(); todo19(); */
+        todo18();
+        /* todo19(); */
     }
 
 
@@ -183,7 +187,39 @@ public class Exercise2Runner implements CommandLineRunner {
                 "   %s | %-35s | %d student(s)%n", r.getCode(), r.getName(), r.getEnrolled()));
     }
 
+    // ===== TODO 18 =====
+    private void todo18() {
+        title("TODO 18: interface projection - enrollments of department AI");
+        enrollmentService.getEnrollmentsOfDepartment("AI").forEach(v -> System.out.printf(
+                "   %s | %-14s | %s | %-35s | %d%n",
+                v.getStudentCode(), v.getFullName(), v.getCourseCode(), v.getCourseName(), v.getCredits()));
+    }
 
+
+    // ===== TEST 3 CÂU HỎI KIỂM TRA =====
+    private void test3CauHoi() {
+        title("CÂU 1: Khóa học có credits trong khoảng [3 - 4]");
+        System.out.println("-- (a) Dùng Custom Query (JPQL):");
+        courseRepository.findByCreditsInRange(3, 4).forEach(c -> 
+            System.out.printf("   %s | %-40s | %d credits%n", c.getCode(), c.getName(), c.getCredits()));
+        System.out.println("-- (b) Dùng Derived Method:");
+        courseRepository.findByCreditsBetweenOrderByCreditsAscCodeAsc(3, 4).forEach(c -> 
+            System.out.printf("   %s | %-40s | %d credits%n", c.getCode(), c.getName(), c.getCredits()));
+
+        title("CÂU 2: Đếm số khóa học có credits > 3");
+        long countCustom = courseRepository.countCoursesWithCreditsGreaterThan(3);
+        long countDerived = courseRepository.countByCreditsGreaterThan(3);
+        System.out.println("   -> (Custom Query) Số lượng: " + countCustom);
+        System.out.println("   -> (Derived Method) Số lượng: " + countDerived);
+
+        title("CÂU 3: Tìm khóa học có tên chứa từ khóa 'ing'");
+        System.out.println("-- (a) Dùng Custom Query (JPQL):");
+        courseRepository.searchByNameContaining("ing").forEach(c -> 
+            System.out.printf("   %s | %-40s%n", c.getCode(), c.getName()));
+        System.out.println("-- (b) Dùng Derived Method:");
+        courseRepository.findByNameContainingIgnoreCase("ing").forEach(c -> 
+            System.out.printf("   %s | %-40s%n", c.getCode(), c.getName()));
+    }
 
 
 
@@ -209,4 +245,5 @@ public class Exercise2Runner implements CommandLineRunner {
             System.out.println("   [FAIL] " + label + " -> " + e.getMessage());
         }
     }
+   
 }

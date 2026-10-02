@@ -45,6 +45,23 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                    "ORDER BY enrolled DESC, c.code",
            nativeQuery = true)
     List<CourseEnrollmentCount> findTopEnrolledNative(@Param("n") int n);
+    List<Course> findByNameContainingIgnoreCase(String keyword);
+    List<Course> findByNameContainingIgnoreCaseOrderByNameDesc(String keyword);
+
+    // ===== 3 CÂU HỎI KIỂM TRA =====
+    // Câu 1: Khóa học có credits trong khoảng min–max (Custom Query & Derived Method)
+    @Query("SELECT c FROM Course c WHERE c.credits BETWEEN :min AND :max ORDER BY c.credits ASC, c.code ASC")
+    List<Course> findByCreditsInRange(@Param("min") int min, @Param("max") int max);
+    List<Course> findByCreditsBetweenOrderByCreditsAscCodeAsc(int min, int max);
+
+    // Câu 2: Đếm số khóa có credits > 3 (Custom Query & Derived Method)
+    @Query("SELECT COUNT(c) FROM Course c WHERE c.credits > :val")
+    long countCoursesWithCreditsGreaterThan(@Param("val") int val);
+    long countByCreditsGreaterThan(int val);
+
+    // Câu 3: Tìm khóa có tên chứa từ khóa (không phân biệt hoa/thường)
+    @Query("SELECT c FROM Course c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :kw, '%')) ORDER BY c.code ASC")
+    List<Course> searchByNameContaining(@Param("kw") String keyword);
 }
 
 
