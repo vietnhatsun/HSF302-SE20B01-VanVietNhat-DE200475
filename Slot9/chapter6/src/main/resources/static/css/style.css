@@ -1,0 +1,6 @@
+body { background-color: #f8f9fa; }
+.navbar-brand { font-weight: bold; font-size: 1.3rem; }
+.table th { background-color: #343a40; color: #fff; }
+.gpa-high { color: #28a745; font-weight: bold; }
+.gpa-mid  { color: #fd7e14; }
+.gpa-low  { color: #dc3545; }
