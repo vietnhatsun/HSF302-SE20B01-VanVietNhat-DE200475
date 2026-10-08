@@ -22,5 +22,8 @@ public interface StudentService {
     /** Kiểm tra email trùng. excludeId = null khi thêm mới, = id hiện tại khi cập nhật */
     boolean isEmailTaken(String email, Long excludeId);
 
+    /** Tìm kiếm sinh viên theo tên hoặc email */
+    List<Student> search(String keyword);
+
     List<String> getMajors();
 }

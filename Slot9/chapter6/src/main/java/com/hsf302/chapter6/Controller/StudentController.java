@@ -1,4 +1,4 @@
-package com.hsf302.chapter6.controller;
+package com.hsf302.chapter6.Controller;
 
 import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.service.StudentService;
@@ -31,13 +31,15 @@ public class StudentController {
         return studentService.getMajors();
     }
 
-    // ==================== READ ALL ====================
+    // ==================== READ ALL & SEARCH ====================
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("students", studentService.findAll());
+    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        model.addAttribute("students", studentService.search(keyword));
+        model.addAttribute("keyword", keyword);
         return "students/list";
     }
+
 
     // ==================== READ ONE ====================
 
