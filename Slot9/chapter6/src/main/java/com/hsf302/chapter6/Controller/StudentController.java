@@ -3,6 +3,7 @@ package com.hsf302.chapter6.Controller;
 import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +32,19 @@ public class StudentController {
         return studentService.getMajors();
     }
 
-    // ==================== READ ALL & SEARCH ====================
+    // ==================== READ ALL & SEARCH & PAGINATION ====================
 
     @GetMapping
-    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        model.addAttribute("students", studentService.search(keyword));
+    public String list(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "3") int size,
+            Model model) {
+        Page<Student> studentPage = studentService.findPaginated(keyword, page, size);
+        model.addAttribute("studentPage", studentPage);
+        model.addAttribute("students", studentPage.getContent());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
         return "students/list";
     }
 

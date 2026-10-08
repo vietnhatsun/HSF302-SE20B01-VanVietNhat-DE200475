@@ -1,6 +1,7 @@
 package com.hsf302.chapter6.service;
 
 import com.hsf302.chapter6.entity.Student;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,9 @@ public interface StudentService {
 
     /** Tìm kiếm sinh viên theo tên hoặc email */
     List<Student> search(String keyword);
+
+    /** Phân trang danh sách sinh viên kết hợp tìm kiếm */
+    Page<Student> findPaginated(String keyword, int page, int size);
 
     List<String> getMajors();
 }
