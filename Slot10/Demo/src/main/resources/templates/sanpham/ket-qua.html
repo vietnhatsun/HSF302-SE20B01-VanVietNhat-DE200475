@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Kết quả</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<main class="container py-4">
+
+    <!-- Flash message: chỉ có ngay sau redirect -->
+    <div th:if="${thongBao}" class="alert alert-success" th:text="${thongBao}">Thông báo</div>
+
+    <h3 class="h5">Danh sách hiện tại</h3>
+
+    <ul class="list-group mb-3" th:unless="${#lists.isEmpty(danhSach)}">
+        <li class="list-group-item" th:each="sp : ${danhSach}">
+            <!-- |...| literal substitution: ghép chuỗi gọn hơn dùng + -->
+            <span th:text="|${sp.ten} - ${#numbers.formatDecimal(sp.gia, 1, 'POINT', 0, 'COMMA')} VNĐ (SL: ${sp.soLuong})|">
+                Tên - Giá (SL)
+            </span>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(danhSach)}" class="text-muted">Chưa có sản phẩm.</p>
+
+    <a th:href="@{/sanpham/them}" class="btn btn-primary">Thêm tiếp</a>
+</main>
+</body>
+</html>
