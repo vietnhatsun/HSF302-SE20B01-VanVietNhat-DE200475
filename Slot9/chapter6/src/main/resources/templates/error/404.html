@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>404 - Không tìm thấy trang</title>
+</head>
+<body>
+<section>
+    <div class="row justify-content-center text-center my-5">
+        <div class="col-md-7">
+            <div class="card shadow-sm p-5 border-0">
+                <div class="display-1 text-warning fw-bold mb-3">
+                    <i class="bi bi-exclamation-diamond-fill"></i> 404
+                </div>
+                <h3 class="mb-3">Không tìm thấy dữ liệu hoặc trang yêu cầu</h3>
+                <p class="text-muted" th:text="${errorMessage}">
+                    Đường dẫn bạn truy cập không tồn tại hoặc tài nguyên đã bị xóa.
+                </p>
+                <div th:if="${errorDetail}" class="alert alert-light text-start small border">
+                    <strong>Chi tiết lỗi:</strong> <span th:text="${errorDetail}"></span>
+                </div>
+                <div class="mt-4">
+                    <a th:href="@{/students}" class="btn btn-primary px-4 me-2">
+                        <i class="bi bi-house-door me-1"></i>Về danh sách sinh viên
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
