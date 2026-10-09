@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${tieuDe}">Danh sách</title>
+    <!-- Bootstrap OFFLINE (TODO 0.3). Dùng online thì thay bằng link CDN. -->
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<main class="container py-4">
+
+    <h1 class="h3 mb-3" th:text="${tieuDe}">Tiêu đề</h1>
+
+    <!-- Có dữ liệu → hiện bảng -->
+    <table class="table table-bordered table-hover bg-white"
+           th:unless="${#lists.isEmpty(sinhViens)}">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th class="text-end">Điểm TB</th>
+            <th>Xếp loại</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- sv: phần tử hiện tại; stat: biến trạng thái (count bắt đầu từ 1) -->
+        <tr th:each="sv, stat : ${sinhViens}">
+            <td th:text="${stat.count}">1</td>
+            <td th:text="${sv.maSV}">SV001</td>
+            <td th:text="${sv.hoTen}">Nguyễn Văn A</td>
+            <td class="text-end" th:text="${#numbers.formatDecimal(sv.diemTB, 1, 1)}">8.5</td>
+            <td>
+                <span th:if="${sv.diemTB >= 8.0}" class="badge bg-success">Giỏi</span>
+                <span th:if="${sv.diemTB >= 6.5 and sv.diemTB < 8.0}" class="badge bg-primary">Khá</span>
+                <span th:if="${sv.diemTB < 6.5}" class="badge bg-danger">Trung bình</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Rỗng → hiện thông báo -->
+    <div th:if="${#lists.isEmpty(sinhViens)}" class="alert alert-info">
+        Không có sinh viên nào.
+    </div>
+
+    <p class="text-muted" th:unless="${#lists.isEmpty(sinhViens)}">
+        Tổng: <strong th:text="${#lists.size(sinhViens)}">0</strong> sinh viên
+    </p>
+</main>
+</body>
+</html>
