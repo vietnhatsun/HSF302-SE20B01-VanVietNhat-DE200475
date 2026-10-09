@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Thống kê & Quản trị nâng cao</title>
+</head>
+<body>
+<section>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Báo cáo Thống kê & Quản trị Nâng cao</h2>
+            <p class="text-muted mb-0">Khu vực phục vụ kiểm tra truy vấn JPQL/Native SQL, Thao tác Bulk Edit & Bulk Delete</p>
+        </div>
+        <a th:href="@{/students}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Về danh sách sinh viên
+        </a>
+    </div>
+
+    <!-- Row 1: Thống kê chuyên ngành & Top sinh viên -->
+    <div class="row g-4 mb-4">
+        <!-- Bảng thống kê theo chuyên ngành (JPQL GROUP BY + DTO) -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="bi bi-pie-chart-fill me-2"></i>1. Thống kê theo chuyên ngành (GROUP BY JPQL)
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(stats)}" class="p-4 text-center text-muted">
+                        Chưa có dữ liệu thống kê.
+                    </div>
+                    <table th:unless="${#lists.isEmpty(stats)}" class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Chuyên ngành</th>
+                            <th class="text-center">Số sinh viên</th>
+                            <th class="text-center">GPA TB</th>
+                            <th class="text-center">GPA Cao nhất</th>
+                            <th class="text-center">GPA Thấp nhất</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="st : ${stats}">
+                            <td>
+                                <span class="badge bg-primary" th:text="${st.major}">CNTT</span>
+                            </td>
+                            <td class="text-center fw-bold" th:text="${st.totalStudents}">0</td>
+                            <td class="text-center text-primary fw-semibold"
+                                th:text="${#numbers.formatDecimal(st.avgGpa, 1, 2)}">0.00</td>
+                            <td class="text-center text-success"
+                                th:text="${#numbers.formatDecimal(st.maxGpa, 1, 1)}">0.0</td>
+                            <td class="text-center text-danger"
+                                th:text="${#numbers.formatDecimal(st.minGpa, 1, 1)}">0.0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 3 sinh viên GPA cao nhất (Derived Query) -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="bi bi-trophy-fill me-2"></i>2. Top 3 sinh viên GPA cao nhất (Top Query)
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${#lists.isEmpty(topStudents)}" class="p-4 text-center text-muted">
+                        Chưa có sinh viên nào.
+                    </div>
+                    <ul th:unless="${#lists.isEmpty(topStudents)}" class="list-group list-group-flush">
+                        <li th:each="sv, stat : ${topStudents}"
+                            class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge rounded-pill me-2"
+                                      th:classappend="${stat.count == 1 ? 'bg-warning text-dark' : (stat.count == 2 ? 'bg-secondary' : 'bg-info')}">
+                                    #<span th:text="${stat.count}">1</span>
+                                </span>
+                                <strong th:text="${sv.name}">Tên</strong>
+                                <small class="text-muted d-block ms-4" th:text="${sv.major} + ' - ' + ${sv.email}">Email</small>
+                            </div>
+                            <span class="badge bg-success fs-6" th:text="${#numbers.formatDecimal(sv.gpa, 1, 1)}">4.0</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Các thao tác Bulk Edit & Bulk Delete đặc thù -->
+    <div class="row g-4">
+        <!-- 3. Bulk Edit: Cộng điểm GPA theo chuyên ngành -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-info">
+                <div class="card-header bg-info text-white fw-bold">
+                    <i class="bi bi-pencil-square me-2"></i>3. Bulk Edit (Cộng điểm chuyên ngành)
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Sử dụng câu truy vấn JPQL <code>@Modifying UPDATE</code> tăng điểm GPA cho toàn bộ sinh viên trong ngành đã chọn (tối đa 4.0).</p>
+                    <form th:action="@{/students/bonus-gpa}" method="post">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Chọn chuyên ngành:</label>
+                            <select name="major" class="form-select form-select-sm" required>
+                                <option th:each="m : ${majors}" th:value="${m}" th:text="${m}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Điểm cộng thêm (+GPA):</label>
+                            <input type="number" step="0.1" min="0.1" max="1.0" name="bonus" value="0.2" class="form-control form-control-sm" required/>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-info text-white w-100"
+                                onclick="return confirm('Cộng điểm cho toàn bộ sinh viên ngành này?')">
+                            <i class="bi bi-award me-1"></i>Thực hiện cộng điểm
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Bulk Delete: Xóa sinh viên GPA < 2.0 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-warning">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    <i class="bi bi-shield-slash me-2"></i>4. Bulk Delete (Xóa sinh viên yếu)
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Sử dụng JPQL <code>@Modifying DELETE</code> xóa toàn bộ sinh viên có GPA dưới ngưỡng cảnh báo học vụ.</p>
+                    <form th:action="@{/students/delete-low-gpa}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Ngưỡng điểm GPA tối thiểu:</label>
+                            <input type="number" step="0.1" min="0.0" max="4.0" name="minGpa" value="2.0" class="form-control form-control-sm" required/>
+                            <div class="form-text small">Mặc định: SV có GPA < 2.0 sẽ bị xóa.</div>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-warning text-dark w-100"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa tất cả sinh viên dưới ngưỡng điểm này?')">
+                            <i class="bi bi-trash3 me-1"></i>Xóa sinh viên điểm yếu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Delete by Major: Xóa theo chuyên ngành -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 border-danger">
+                <div class="card-header bg-danger text-white fw-bold">
+                    <i class="bi bi-trash-fill me-2"></i>5. Xóa theo chuyên ngành
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Sử dụng Spring Data Derived Query <code>deleteByMajor(String major)</code> để xóa toàn bộ sinh viên thuộc 1 ngành.</p>
+                    <form th:action="@{/students/delete-by-major}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Chọn chuyên ngành cần xóa:</label>
+                            <select name="major" class="form-select form-select-sm" required>
+                                <option th:each="m : ${majors}" th:value="${m}" th:text="${m}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-danger w-100"
+                                onclick="return confirm('CẢNH BÁO: Thao tác này sẽ xóa vĩnh viễn tất cả sinh viên của chuyên ngành đã chọn!')">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Xóa toàn bộ ngành
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>
