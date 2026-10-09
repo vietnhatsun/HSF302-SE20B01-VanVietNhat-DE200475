@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Thêm sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<main class="container py-4" style="max-width: 600px">
+    <h2 class="h4 mb-3">Thêm sản phẩm mới</h2>
+
+    <!--
+        th:action → URL đích (tự thêm context path)
+        th:object → object trong Model; bên trong dùng *{...}
+        th:field  → sinh id, name, value cho input
+    -->
+    <form th:action="@{/sanpham/them}" th:object="${sanPham}" method="post"
+          class="card card-body shadow-sm">
+
+        <div class="mb-3">
+            <label for="ten" class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control" th:field="*{ten}"
+                   placeholder="Nhập tên..." required/>
+        </div>
+
+        <div class="mb-3">
+            <label for="gia" class="form-label">Giá (VNĐ)</label>
+            <input type="number" class="form-control" th:field="*{gia}" min="0" step="1000" required/>
+        </div>
+
+        <div class="mb-3">
+            <label for="soLuong" class="form-label">Số lượng</label>
+            <input type="number" class="form-control" th:field="*{soLuong}" min="0" required/>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Thêm</button>
+            <a th:href="@{/sanpham/ket-qua}" class="btn btn-outline-secondary">Xem danh sách</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
