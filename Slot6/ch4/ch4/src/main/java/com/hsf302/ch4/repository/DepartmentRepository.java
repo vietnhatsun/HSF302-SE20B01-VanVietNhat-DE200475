@@ -21,6 +21,13 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
            "ORDER BY d.code")
     List<DepartmentStatDTO> getDepartmentStats();
 
+    @Query("SELECT new com.hsf302.ch4.dto.DepartmentStatDTO(d.code, d.name, COUNT(s), AVG(s.gpa)) " +
+           "FROM Department d JOIN d.students s " +
+           "GROUP BY d.code, d.name " +
+           "HAVING COUNT(s) >= :minCount " +
+           "ORDER BY COUNT(s) DESC")
+    List<DepartmentStatDTO> findDepartmentStatsWithMinStudents(@Param("minCount") long minCount);
+
     // ===== TODO 16 =====
     @Query("SELECT d FROM Department d LEFT JOIN FETCH d.students WHERE d.code = :code")
     Optional<Department> findByCodeWithStudents(@Param("code") String code);
