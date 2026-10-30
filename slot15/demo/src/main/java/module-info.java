@@ -12,4 +12,6 @@ module fu.de200475.demo {
     opens com.fu.ch08.t1 to javafx.fxml, javafx.base;
     exports com.fu.ch08.t2;
     exports com.fu.ch08.t3;
+    exports com.fu.ch08.t4;
+    opens com.fu.ch08.t4 to javafx.fxml, javafx.base;
 }
