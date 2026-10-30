@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.fu.ch08.t1.StudentController" prefWidth="1000" prefHeight="620">
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Import CSV..." accelerator="Shortcut+O" onAction="#handleImport"/>
+                    <MenuItem text="Export CSV..." accelerator="Shortcut+S" onAction="#handleExport"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Thoát" onAction="#handleExit"/>
+                </Menu>
+                <Menu text="Edit">
+                    <MenuItem text="Xóa sinh viên" accelerator="Delete" onAction="#handleDelete"/>
+                </Menu>
+            </MenuBar>
+            <ToolBar>
+                <Button text="➕ Thêm" onAction="#handleAdd"/>
+                <Button fx:id="btnUpdate" text="✏ Cập nhật" onAction="#handleUpdate"/>
+                <Button fx:id="btnDelete" text="🗑 Xóa" onAction="#handleDelete"/>
+                <Separator/>
+                <Button text="📂 Import" onAction="#handleImport"/>
+                <Button text="💾 Export" onAction="#handleExport"/>
+            </ToolBar>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.25">
+            <TreeView fx:id="tvFaculty"/>
+            <VBox spacing="6" style="-fx-padding: 8;">
+                <TextField fx:id="tfSearch" promptText="Tìm theo MSSV hoặc họ tên..."/>
+                <TableView fx:id="tblStudents" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colId" text="MSSV" prefWidth="100"/>
+                        <TableColumn fx:id="colName" text="Họ tên" prefWidth="220"/>
+                        <TableColumn fx:id="colClass" text="Lớp" prefWidth="90"/>
+                        <TableColumn fx:id="colGpa" text="GPA" prefWidth="70"/>
+                        <TableColumn fx:id="colGrade" text="Xếp loại" prefWidth="100"/>
+                    </columns>
+                </TableView>
+                <Label fx:id="lblCount"/>
+            </VBox>
+        </SplitPane>
+    </center>
+    <bottom>
+        <GridPane hgap="10" vgap="8" style="-fx-padding: 10;">
+            <Label text="MSSV"/>    <TextField fx:id="tfId" GridPane.columnIndex="1"/>
+            <Label text="Họ tên" GridPane.columnIndex="2"/> <TextField fx:id="tfName" GridPane.columnIndex="3"/>
+            <Label text="Lớp" GridPane.rowIndex="1"/> <ComboBox fx:id="cbClass" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label text="GPA" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+            <TextField fx:id="tfGpa" promptText="0 - 10" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+            <Button text="Làm mới" onAction="#handleClear" GridPane.rowIndex="1" GridPane.columnIndex="4"/>
+        </GridPane>
+    </bottom>
+</BorderPane>
