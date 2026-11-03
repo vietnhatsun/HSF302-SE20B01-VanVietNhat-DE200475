@@ -1,5 +1,7 @@
 package com.example.ui.controller;
 
+import com.example.data.exception.StudentNotFoundException;
+import com.example.data.exception.ValidationException;
 import com.example.data.pojo.Student;
 import com.example.data.service.StudentService;
 import javafx.collections.FXCollections;
@@ -9,6 +11,7 @@ import javafx.scene.control.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class StudentController {
@@ -27,7 +30,6 @@ public class StudentController {
 
     @FXML
     public void initialize() {
-        // TODO 5.2: tableView binding, selection listener, disable bindings, initial load
         tableView.setItems(data);
 
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -42,7 +44,6 @@ public class StudentController {
         loadData();
     }
 
-    // TODO 5.3: loadData
     private void loadData() {
         try {
             List<Student> list = studentService.findAll();
@@ -55,7 +56,6 @@ public class StudentController {
         }
     }
 
-    // TODO 5.4: handleSearch, handleRefresh
     @FXML
     private void handleSearch() {
         try {
@@ -76,7 +76,6 @@ public class StudentController {
         loadData();
     }
 
-    // TODO 5.5: fillForm, showInfo, showError
     private void fillForm(Student s) {
         if (s != null) {
             idField.setText(s.getId() != null ? String.valueOf(s.getId()) : "");
@@ -85,6 +84,102 @@ public class StudentController {
             ageField.setText(s.getAge() != null ? String.valueOf(s.getAge()) : "");
             clearMessage();
         }
+    }
+
+    // TODO 6.1: readForm
+    private Student readForm() {
+        String name = nameField.getText();
+        String email = emailField.getText();
+        String ageText = ageField.getText();
+
+        if (ageText == null || ageText.isBlank()) {
+            throw new ValidationException("Age is required");
+        }
+
+        int age;
+        try {
+            age = Integer.parseInt(ageText.trim());
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Age must be a number");
+        }
+
+        return new Student(name, email, age);
+    }
+
+    // TODO 6.2: handleAdd
+    @FXML
+    private void handleAdd() {
+        try {
+            Student s = readForm();
+            Student created = studentService.create(s);
+            showInfo("Added: " + created.getName());
+            handleClear();
+            loadData();
+        } catch (ValidationException | StudentNotFoundException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("System error: " + e.getMessage());
+        }
+    }
+
+    // TODO 6.3: handleUpdate
+    @FXML
+    private void handleUpdate() {
+        try {
+            Student selected = tableView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                return;
+            }
+            Student edit = readForm();
+            edit.setId(selected.getId());
+            Student updated = studentService.update(edit);
+            showInfo("Updated: " + updated.getName());
+            handleClear();
+            loadData();
+        } catch (ValidationException | StudentNotFoundException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("System error: " + e.getMessage());
+        }
+    }
+
+    // TODO 6.4: handleDelete
+    @FXML
+    private void handleDelete() {
+        try {
+            Student selected = tableView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                return;
+            }
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Delete");
+            alert.setHeaderText(null);
+            alert.setContentText("Delete student \"" + selected.getName() + "\"?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                studentService.delete(selected.getId());
+                showInfo("Deleted: " + selected.getName());
+                handleClear();
+                loadData();
+            }
+        } catch (ValidationException | StudentNotFoundException e) {
+            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("System error: " + e.getMessage());
+        }
+    }
+
+    // TODO 6.5: handleClear
+    @FXML
+    private void handleClear() {
+        idField.clear();
+        nameField.clear();
+        emailField.clear();
+        ageField.clear();
+        tableView.getSelectionModel().clearSelection();
+        nameField.requestFocus();
     }
 
     private void showInfo(String message) {
@@ -100,10 +195,4 @@ public class StudentController {
     private void clearMessage() {
         messageLabel.setText("");
     }
-
-    // Stubs for TODO #6
-    @FXML private void handleAdd()     { }
-    @FXML private void handleUpdate()  { }
-    @FXML private void handleDelete()  { }
-    @FXML private void handleClear()   { }
 }
