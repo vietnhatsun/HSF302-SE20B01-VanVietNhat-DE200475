@@ -112,3 +112,4 @@ public class DeviceController {
         return "device-view";
     }
 }
+
